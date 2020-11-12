@@ -2,13 +2,19 @@ package bsu.rfe.java.group10.lab1.Charnetsky.varC3;
 
 //импортируем классы которые будет использовать в приложении
 
+import java.awt.image.BufferedImage;
 import java.lang.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.Toolkit;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.lang.StrictMath.cos;;
 
@@ -17,8 +23,8 @@ import static java.lang.StrictMath.cos;;
 public class MainFrame extends JFrame {
 
     // Размеры окна приложения в виде констант
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 360;
+    private static final int WIDTH = 700;
+    private static final int HEIGHT = 400;
 
     // Текстовые поля для считывания значений переменных,
     // как компоненты, совместно используемые в различных методах
@@ -31,6 +37,8 @@ public class MainFrame extends JFrame {
     // как компонент, совместно используемый в различных методах
     private JTextField textFieldResult;
 
+    private JLabel imageLabel = new JLabel();
+
     // Группа радио-кнопок для обеспечения уникальности выделения в группе
     private ButtonGroup radioButtons = new ButtonGroup();
 
@@ -42,22 +50,40 @@ public class MainFrame extends JFrame {
     private JButton imagePane;
 
     // Формула №1 для рассчѐта
-    public Double calculate1(Double x, Double y, Double z){
-        return (Math.pow(Math.log1p(Math.pow(1+x,2)) + cos(3.14*z*z*z),Math.sin(y)) + Math.pow((Math.exp(x*x)) + cos(Math.exp(z)),1/x));
+    public Double calculate1(Double x, Double y, Double z) {
+        return (Math.pow(Math.log1p(Math.pow(1 + x, 2)) + cos(3.14 * z * z * z), Math.sin(y)) + Math.pow((Math.exp(x * x)) + cos(Math.exp(z)), 1 / x));
     }
 
     // Формула №2 для рассчѐта
-    public Double calculate2(Double x, Double y, Double z){
+    public Double calculate2(Double x, Double y, Double z) {
 
-        return (Math.pow(cos(3.14  * x) + Math.log1p(Math.pow(1+y,2)),0.25) * (Math.exp(z*z) + Math.pow(1/x,0.5) + cos(Math.exp(y))) );
+        return (Math.pow(cos(3.14 * x) + Math.log1p(Math.pow(1 + y, 2)), 0.25) * (Math.exp(z * z) + Math.pow(1 / x, 0.5) + cos(Math.exp(y))));
     }
 
-    // Вспомогательный метод для добавления кнопок на панель
-    private void addRadioButton(String buttonName, final int formulaId){
+    //Массивчик путей к двум картинкам
+    private String[] ImagePath = {"E:\\Java\\Exaple_lab_2\\img\\Formula_1.png", "E:\\Java\\Exaple_lab_2\\img\\Formula_2.png"};
+    BufferedImage imageFunction;
+
+    {
+        try {
+            imageFunction = ImageIO.read(new File(ImagePath[0]));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Вспомогательный метод для добавления кнопок на панель для выбора необходимой формулы и картинки
+    private void addRadioButton(String buttonName, final int formulaId) {
         JRadioButton button = new JRadioButton(buttonName);
-        button.addActionListener(new ActionListener(){
+        button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 MainFrame.this.formulaId = formulaId;
+                try {
+                    MainFrame.this.imageFunction = ImageIO.read(new File(ImagePath[formulaId - 1]));
+                    imageLabel.setIcon(new ImageIcon(imageFunction));
+                } catch (IOException ex) {
+                    Logger.getLogger(JFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 imagePane.updateUI();
             }
         });
@@ -66,15 +92,16 @@ public class MainFrame extends JFrame {
     }
 
     //Конструктор класса
-    public MainFrame(){
+    public MainFrame() {
 
         super("Вычисление формулы");
 
-        setSize(WIDTH,HEIGHT);
+        setSize(WIDTH, HEIGHT);
         Toolkit kit = Toolkit.getDefaultToolkit();
 
         //Центрирую окно приложения на экране
-        setLocation((kit.getScreenSize().width - WIDTH)/2,(kit.getScreenSize().height - HEIGHT)/2);
+        setLocation((kit.getScreenSize().width - WIDTH) / 2, (kit.getScreenSize().height - HEIGHT) / 2);
+
         hboxFormulaType.add(Box.createHorizontalGlue());
         addRadioButton("Формула 1", 1);
         addRadioButton("Формула 2", 2);
@@ -82,17 +109,26 @@ public class MainFrame extends JFrame {
         hboxFormulaType.add(Box.createHorizontalGlue());
         hboxFormulaType.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
 
+        //Создаю область для вывода изображения функции
+        imageLabel.setIcon(new ImageIcon(imageFunction));
+        Box hboxImage = Box.createHorizontalBox();
+        hboxImage.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        hboxImage.add(Box.createHorizontalGlue());
+        hboxImage.add(imageLabel);
+        hboxImage.add(Box.createHorizontalGlue());
+
+
         //Создать область для ввода данных X и Y
         JLabel labelForX = new JLabel("X:");
-        textFieldX = new JTextField("",10);
+        textFieldX = new JTextField("", 10);
         textFieldX.setMaximumSize(textFieldX.getPreferredSize());
         JLabel labelForY = new JLabel("Y:");
-        textFieldY = new JTextField("",10);
+        textFieldY = new JTextField("", 10);
         textFieldY.setMaximumSize(textFieldY.getPreferredSize());
 
         //Создаю область для ввода Z
         JLabel labelForZ = new JLabel("Z:");
-        textFieldZ = new JTextField("",10);
+        textFieldZ = new JTextField("", 10);
         textFieldZ.setMaximumSize(textFieldZ.getPreferredSize());
 
         Box hboxVariables = Box.createHorizontalBox();
@@ -115,7 +151,7 @@ public class MainFrame extends JFrame {
         //Создать область для вывода резльтата
         JLabel labelForResult = new JLabel("Результат");
         //labelResult = new JLabel("0");
-        textFieldResult = new JTextField("",10);
+        textFieldResult = new JTextField("", 10);
         textFieldResult.setMaximumSize(textFieldResult.getPreferredSize());
 
         Box hboxResult = Box.createHorizontalBox();
@@ -131,30 +167,30 @@ public class MainFrame extends JFrame {
         buttonCalc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try{
+                try {
                     Double x = Double.parseDouble(textFieldX.getText());
                     Double y = Double.parseDouble(textFieldY.getText());
                     Double z = Double.parseDouble(textFieldZ.getText());
                     Double Result;
-                    if(formulaId == 1)
-                        Result = calculate1(x,y,z);
+                    if (formulaId == 1)
+                        Result = calculate1(x, y, z);
                     else
-                        Result = calculate2(x,y,z);
+                        Result = calculate2(x, y, z);
                     textFieldResult.setText(Result.toString());
-                } catch (NumberFormatException ex){
-                    JOptionPane.showMessageDialog(MainFrame.this,"Ошибка в формате записи числа с плавающей точкой", "Ошибочный формат числа",
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(MainFrame.this, "Ошибка в формате записи числа с плавающей точкой", "Ошибочный формат числа",
                             JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
 
         JButton buttonReset = new JButton("Очистить поля");
-        buttonReset.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent ev){
+        buttonReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
                 textFieldX.setText("");
                 textFieldY.setText("");
                 textFieldZ.setText("");
-                textFieldResult.setText("");
+                textFieldResult.setText("0");
             }
         });
 
@@ -171,11 +207,11 @@ public class MainFrame extends JFrame {
         Box contentBox = Box.createVerticalBox();
         contentBox.add(Box.createVerticalGlue());
         contentBox.add(hboxFormulaType);
+        contentBox.add(hboxImage);
         contentBox.add(hboxVariables);
         contentBox.add(hboxResult);
         contentBox.add(hboxButtons);
         contentBox.add(Box.createVerticalGlue());
         getContentPane().add(contentBox, BorderLayout.CENTER);
     }
-
 }
