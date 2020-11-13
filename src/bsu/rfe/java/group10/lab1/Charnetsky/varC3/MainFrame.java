@@ -1,7 +1,5 @@
 package bsu.rfe.java.group10.lab1.Charnetsky.varC3;
 
-//импортируем классы которые будет использовать в приложении
-
 import java.awt.image.BufferedImage;
 import java.lang.*;
 import javax.imageio.ImageIO;
@@ -15,65 +13,45 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import static java.lang.StrictMath.cos;;
 
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
-    // Размеры окна приложения в виде констант
     private static final int WIDTH = 700;
     private static final int HEIGHT = 400;
 
-    // Текстовые поля для считывания значений переменных,
-    // как компоненты, совместно используемые в различных методах
     private JTextField textFieldX;
     private JTextField textFieldY;
-    //добавляем третюю переменную
     private JTextField textFieldZ;
-
-    // Текстовое поле для отображения результата,
-    // как компонент, совместно используемый в различных методах
     private JTextField textFieldResult;
 
-    //Внутренняя память
     private Double Mem1 = (double) 0;
     private Double Mem2 = (double) 0;
     private Double Mem3 = (double) 0;
 
     private JLabel imageLabel = new JLabel();
 
-    // Группа радио-кнопок для обеспечения уникальности выделения в группе
     private ButtonGroup radioButtons = new ButtonGroup();
-    //кнопки для памяти
     private ButtonGroup radioButtonsForMemory = new ButtonGroup();
 
-    // Контейнер для отображения радио-кнопок
     private Box hboxFormulaType = Box.createHorizontalBox();
-    //памяти
     private Box hboxMemoryType = Box.createHorizontalBox();
 
     private int formulaId = 1;
     private int memoryId = 1;
-    //временное решение проблемы в imagePane.updateUI();
-    private JButton imagePane;
 
-    // Формула №1 для рассчѐта
     public Double calculate1(Double x, Double y, Double z) {
         return (Math.pow(Math.log1p(Math.pow(1 + x, 2)) + cos(3.14 * z * z * z), Math.sin(y)) + Math.pow((Math.exp(x * x)) + cos(Math.exp(z)), 1 / x));
     }
 
-    // Формула №2 для рассчѐта
     public Double calculate2(Double x, Double y, Double z) {
-
         return (Math.pow(cos(3.14 * x) + Math.log1p(Math.pow(1 + y, 2)), 0.25) * (Math.exp(z * z) + Math.pow(1 / x, 0.5) + cos(Math.exp(y))));
     }
 
-    //Массивчик путей к двум картинкам
     private String[] ImagePath = {"E:\\Java\\Exaple_lab_2\\img\\Formula_1.png", "E:\\Java\\Exaple_lab_2\\img\\Formula_2.png"};
     BufferedImage imageFunction;
-
     {
         try {
             imageFunction = ImageIO.read(new File(ImagePath[0]));
@@ -82,7 +60,6 @@ public class MainFrame extends JFrame {
         }
     }
 
-    // Вспомогательный метод для добавления кнопок на панель для выбора необходимой формулы и картинки
     private void addRadioButton(String buttonName, final int formulaId) {
         JRadioButton button = new JRadioButton(buttonName);
         button.addActionListener(new ActionListener() {
@@ -94,13 +71,12 @@ public class MainFrame extends JFrame {
                 } catch (IOException ex) {
                     Logger.getLogger(JFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                imagePane.updateUI();
             }
         });
         radioButtons.add(button);
         hboxFormulaType.add(button);
     }
-    // Вспомогательный метод для добавления кнопок на панель для выбора необходимого действия с памятью
+
     private void addRadioButtonForMemory(String buttonName, final int memoryId){
         JRadioButton button = new JRadioButton(buttonName);
         button.addActionListener(new ActionListener() {
@@ -113,7 +89,7 @@ public class MainFrame extends JFrame {
         hboxMemoryType.add(button);
     }
 
-    //Конструктор класса
+
     public MainFrame() {
 
         super("Вычисление формулы");
@@ -121,10 +97,10 @@ public class MainFrame extends JFrame {
         setSize(WIDTH, HEIGHT);
         Toolkit kit = Toolkit.getDefaultToolkit();
 
-        //Центрирую окно приложения на экране
+
         setLocation((kit.getScreenSize().width - WIDTH) / 2, (kit.getScreenSize().height - HEIGHT) / 2);
 
-        //добавление памяти
+
         hboxMemoryType.add(Box.createHorizontalGlue());
         addRadioButtonForMemory("Переменная 1", 1);
         addRadioButtonForMemory("Переменная 2", 2);
@@ -133,13 +109,15 @@ public class MainFrame extends JFrame {
         hboxMemoryType.add(Box.createHorizontalGlue());
         hboxMemoryType.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 
-        //добавление ячейки с ячейками памяти
-        JTextField textFieldMem1 = new JTextField("",10);
+
+        JTextField textFieldMem1 = new JTextField("0",15);
         textFieldMem1.setMaximumSize(textFieldMem1.getPreferredSize());
-        JTextField textFieldMem2 = new JTextField("",10);
+        JTextField textFieldMem2 = new JTextField("0",15);
         textFieldMem2.setMaximumSize(textFieldMem2.getPreferredSize());
-        JTextField textFieldMem3 = new JTextField("",10);
+        JTextField textFieldMem3 = new JTextField("0",15);
         textFieldMem3.setMaximumSize(textFieldMem3.getPreferredSize());
+
+
         Box hboxMemoryR = Box.createHorizontalBox();
         hboxMemoryR.add(Box.createHorizontalGlue());
         hboxMemoryR.add(textFieldMem1);
@@ -149,6 +127,7 @@ public class MainFrame extends JFrame {
         hboxMemoryR.add(textFieldMem3);
         hboxMemoryR.add(Box.createHorizontalGlue());
 
+
         hboxFormulaType.add(Box.createHorizontalGlue());
         addRadioButton("Формула 1", 1);
         addRadioButton("Формула 2", 2);
@@ -156,7 +135,7 @@ public class MainFrame extends JFrame {
         hboxFormulaType.add(Box.createHorizontalGlue());
         hboxFormulaType.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
 
-        //Создаю область для вывода изображения функции
+
         imageLabel.setIcon(new ImageIcon(imageFunction));
         Box hboxImage = Box.createHorizontalBox();
         hboxImage.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
@@ -165,15 +144,12 @@ public class MainFrame extends JFrame {
         hboxImage.add(Box.createHorizontalGlue());
 
 
-        //Создать область для ввода данных X и Y
         JLabel labelForX = new JLabel("X:");
         textFieldX = new JTextField("", 10);
         textFieldX.setMaximumSize(textFieldX.getPreferredSize());
         JLabel labelForY = new JLabel("Y:");
         textFieldY = new JTextField("", 10);
         textFieldY.setMaximumSize(textFieldY.getPreferredSize());
-
-        //Создаю область для ввода Z
         JLabel labelForZ = new JLabel("Z:");
         textFieldZ = new JTextField("", 10);
         textFieldZ.setMaximumSize(textFieldZ.getPreferredSize());
@@ -188,18 +164,17 @@ public class MainFrame extends JFrame {
         hboxVariables.add(labelForY);
         hboxVariables.add(Box.createHorizontalStrut(10));
         hboxVariables.add(textFieldY);
-        //Добавляю Z и текстовое поле для него
         hboxVariables.add(Box.createHorizontalStrut(100));
         hboxVariables.add(labelForZ);
         hboxVariables.add(Box.createHorizontalStrut(10));
         hboxVariables.add(textFieldZ);
         hboxVariables.add(Box.createHorizontalGlue());
 
-        //Создать область для вывода резльтата
+
         JLabel labelForResult = new JLabel("Результат");
-        //labelResult = new JLabel("0");
-        textFieldResult = new JTextField("", 10);
+        textFieldResult = new JTextField("", 15);
         textFieldResult.setMaximumSize(textFieldResult.getPreferredSize());
+
 
         Box hboxResult = Box.createHorizontalBox();
         hboxResult.add(Box.createHorizontalGlue());
@@ -209,7 +184,7 @@ public class MainFrame extends JFrame {
         hboxResult.add(Box.createHorizontalGlue());
         hboxResult.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 
-        //Создать область для кнопок
+
         JButton buttonCalc = new JButton("Вычислить");
         buttonCalc.addActionListener(new ActionListener() {
             @Override
@@ -231,6 +206,7 @@ public class MainFrame extends JFrame {
             }
         });
 
+
         JButton buttonReset = new JButton("Очистить поля");
         buttonReset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
@@ -241,26 +217,26 @@ public class MainFrame extends JFrame {
             }
         });
 
-        //Создание кнопки "MC"
+
         JButton buttonMC = new JButton("MC");
         buttonMC.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(memoryId == 1){
                     Mem1 = (double) 0;
-                    textFieldMem1.setText("");
+                    textFieldMem1.setText("0");
                 }
                 else if(memoryId == 2){
                     Mem2 = (double) 0;
-                    textFieldMem2.setText("");
+                    textFieldMem2.setText("0");
                 }
                 else if(memoryId == 3){
-                    textFieldMem3.setText("");
+                    textFieldMem3.setText("0");
                 }
             }
         });
 
-        //Создание "M+"
+
         JButton buttonM = new JButton("M+");
         buttonM.addActionListener(new ActionListener() {
             @Override
@@ -284,7 +260,7 @@ public class MainFrame extends JFrame {
             }
         });
 
-        //Контейнер для кнопок
+
         Box hboxButtons = Box.createHorizontalBox();
         hboxButtons.add(Box.createHorizontalGlue());
         hboxButtons.add(buttonCalc);
@@ -295,10 +271,9 @@ public class MainFrame extends JFrame {
         hboxButtons.add(Box.createHorizontalStrut(30));
         hboxButtons.add(buttonReset);
         hboxButtons.add(Box.createHorizontalGlue());
-        hboxButtons.setBorder(
-                BorderFactory.createLineBorder(Color.GREEN));
+        hboxButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 
-        // Связать области воедино в компоновке BoxLayout
+
         Box contentBox = Box.createVerticalBox();
         contentBox.add(Box.createVerticalGlue());
         contentBox.add(hboxFormulaType);
