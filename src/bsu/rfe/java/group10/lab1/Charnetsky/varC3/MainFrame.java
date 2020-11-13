@@ -37,15 +37,25 @@ public class MainFrame extends JFrame {
     // как компонент, совместно используемый в различных методах
     private JTextField textFieldResult;
 
+    //Внутренняя память
+    private Double Mem1 = (double) 0;
+    private Double Mem2 = (double) 0;
+    private Double Mem3 = (double) 0;
+
     private JLabel imageLabel = new JLabel();
 
     // Группа радио-кнопок для обеспечения уникальности выделения в группе
     private ButtonGroup radioButtons = new ButtonGroup();
+    //кнопки для памяти
+    private ButtonGroup radioButtonsForMemory = new ButtonGroup();
 
     // Контейнер для отображения радио-кнопок
     private Box hboxFormulaType = Box.createHorizontalBox();
+    //памяти
+    private Box hboxMemoryType = Box.createHorizontalBox();
 
     private int formulaId = 1;
+    private int memoryId = 1;
     //временное решение проблемы в imagePane.updateUI();
     private JButton imagePane;
 
@@ -90,6 +100,18 @@ public class MainFrame extends JFrame {
         radioButtons.add(button);
         hboxFormulaType.add(button);
     }
+    // Вспомогательный метод для добавления кнопок на панель для выбора необходимого действия с памятью
+    private void addRadioButtonForMemory(String buttonName, final int memoryId){
+        JRadioButton button = new JRadioButton(buttonName);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.this.memoryId = memoryId;
+            }
+        });
+        radioButtonsForMemory.add(button);
+        hboxMemoryType.add(button);
+    }
 
     //Конструктор класса
     public MainFrame() {
@@ -101,6 +123,31 @@ public class MainFrame extends JFrame {
 
         //Центрирую окно приложения на экране
         setLocation((kit.getScreenSize().width - WIDTH) / 2, (kit.getScreenSize().height - HEIGHT) / 2);
+
+        //добавление памяти
+        hboxMemoryType.add(Box.createHorizontalGlue());
+        addRadioButtonForMemory("Переменная 1", 1);
+        addRadioButtonForMemory("Переменная 2", 2);
+        addRadioButtonForMemory("Переменная 3", 3);
+        radioButtonsForMemory.setSelected(radioButtonsForMemory.getElements().nextElement().getModel(), true);
+        hboxMemoryType.add(Box.createHorizontalGlue());
+        hboxMemoryType.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
+
+        //добавление ячейки с ячейками памяти
+        JTextField textFieldMem1 = new JTextField("",10);
+        textFieldMem1.setMaximumSize(textFieldMem1.getPreferredSize());
+        JTextField textFieldMem2 = new JTextField("",10);
+        textFieldMem2.setMaximumSize(textFieldMem2.getPreferredSize());
+        JTextField textFieldMem3 = new JTextField("",10);
+        textFieldMem3.setMaximumSize(textFieldMem3.getPreferredSize());
+        Box hboxMemoryR = Box.createHorizontalBox();
+        hboxMemoryR.add(Box.createHorizontalGlue());
+        hboxMemoryR.add(textFieldMem1);
+        hboxMemoryR.add(Box.createHorizontalStrut(10));
+        hboxMemoryR.add(textFieldMem2);
+        hboxMemoryR.add(Box.createHorizontalStrut(10));
+        hboxMemoryR.add(textFieldMem3);
+        hboxMemoryR.add(Box.createHorizontalGlue());
 
         hboxFormulaType.add(Box.createHorizontalGlue());
         addRadioButton("Формула 1", 1);
@@ -194,9 +241,57 @@ public class MainFrame extends JFrame {
             }
         });
 
+        //Создание кнопки "MC"
+        JButton buttonMC = new JButton("MC");
+        buttonMC.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(memoryId == 1){
+                    Mem1 = (double) 0;
+                    textFieldMem1.setText("");
+                }
+                else if(memoryId == 2){
+                    Mem2 = (double) 0;
+                    textFieldMem2.setText("");
+                }
+                else if(memoryId == 3){
+                    textFieldMem3.setText("");
+                }
+            }
+        });
+
+        //Создание "M+"
+        JButton buttonM = new JButton("M+");
+        buttonM.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(memoryId == 1){
+                    Mem1 = (double)Mem1 + Double.parseDouble(textFieldResult.getText());
+                    textFieldMem1.setText(Mem1.toString());
+                    textFieldResult.setText(Mem1.toString());
+                }
+                else if(memoryId == 2){
+                    Mem2 = (double)Mem2 + Double.parseDouble(textFieldResult.getText());
+                    textFieldMem2.setText(Mem2.toString());
+                    textFieldResult.setText(Mem2.toString());
+                }
+                else if(memoryId == 3){
+                    Mem3 = (double)Mem3 + Double.parseDouble(textFieldResult.getText());
+                    textFieldMem3.setText(Mem3.toString());
+                    textFieldResult.setText(Mem3.toString());
+                }
+
+            }
+        });
+
+        //Контейнер для кнопок
         Box hboxButtons = Box.createHorizontalBox();
         hboxButtons.add(Box.createHorizontalGlue());
         hboxButtons.add(buttonCalc);
+        hboxButtons.add(Box.createHorizontalStrut(30));
+        hboxButtons.add(buttonMC);
+        hboxButtons.add(Box.createHorizontalStrut(30));
+        hboxButtons.add(buttonM);
         hboxButtons.add(Box.createHorizontalStrut(30));
         hboxButtons.add(buttonReset);
         hboxButtons.add(Box.createHorizontalGlue());
@@ -208,6 +303,8 @@ public class MainFrame extends JFrame {
         contentBox.add(Box.createVerticalGlue());
         contentBox.add(hboxFormulaType);
         contentBox.add(hboxImage);
+        contentBox.add(hboxMemoryType);
+        contentBox.add(hboxMemoryR);
         contentBox.add(hboxVariables);
         contentBox.add(hboxResult);
         contentBox.add(hboxButtons);
